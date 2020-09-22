@@ -15,6 +15,9 @@ provider:
         - dynamodb:Scan
         - dynamodb:UpdateItem
         - dynamodb:PutItem
+        - dynamodb:GetItem
+        - dynamodb:DescribeTable
+        - dynamodb:Query
       Resource: "arn:aws:dynamodb:*:*:table/${self:provider.environment.DYNAMODB_TABLE}"
 
 resources:
@@ -34,8 +37,13 @@ resources:
           WriteCapacityUnits: 1
 
 functions:
-  hello:
-    handler: handler.hello
+  recordVote:
+    handler: backend/record_vote.handler
+    events:
+      - http:
+          path: votes
+          method: get
+          cors: true
 
 plugins:
   - serverless-finch
